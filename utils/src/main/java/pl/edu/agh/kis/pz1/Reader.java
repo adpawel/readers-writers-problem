@@ -18,7 +18,7 @@ public class Reader extends Thread {
         try {
             Thread.sleep((int) (Math.random() + 0.2) * 1000);
             while(true){
-                library.startReading(this);
+                library.reading(this);
             }
         } catch (InterruptedException e) {
             System.err.println("Wątek czytelnika " + readerId + " przerwany");
