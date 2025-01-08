@@ -2,10 +2,14 @@ package pl.edu.agh.kis.pz1;
 
 import lombok.Getter;
 
+import java.util.Objects;
+import java.util.Random;
+
 @Getter
 public class Reader extends Thread {
     private final Integer readerId;
-    private Library library;
+    private final Library library;
+    private final Random random = new Random();
 
     public Reader(Integer id, Library library) {
         System.out.println("Czytelnik " + id + " wystartował");
@@ -16,12 +20,21 @@ public class Reader extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep((int) (Math.random() + 0.2) * 1000);
+            Thread.sleep(random.nextInt(200, 1200));
             while(true){
                 library.reading(this);
             }
         } catch (InterruptedException e) {
             System.err.println("Wątek czytelnika " + readerId + " przerwany");
         }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null || getClass() != o.getClass()){
+            return false;
+        }
+        Reader other = (Reader) o;
+        return Objects.equals(other.getReaderId(), readerId);
     }
 }

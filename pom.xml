@@ -8,9 +8,9 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--        <sonar.host.url>http://localhost:9000</sonar.host.url>-->
-    <!--        <sonar.projectKey>agh_poker_app</sonar.projectKey>-->
-    <!--        <sonar.login>${env.SONAR_TOKEN}</sonar.login>-->
+            <sonar.host.url>http://localhost:9000</sonar.host.url>
+            <sonar.projectKey>readers-writers-problem</sonar.projectKey>
+            <sonar.login>${env.SONAR_TOKEN}</sonar.login>
     <version.surefire.plugin>2.22.0</version.surefire.plugin>
     <version.junit.jupiter>5.7.2</version.junit.jupiter>
     <project.testresult.directory>${project.build.directory}/surefire-reports</project.testresult.directory>

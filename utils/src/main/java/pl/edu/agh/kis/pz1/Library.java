@@ -2,6 +2,7 @@ package pl.edu.agh.kis.pz1;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ public class Library {
     private int noAllowedReaders = 5;
     private List<Reader> readersInLibrary = new ArrayList<>();
     private List<Writer> writersInLibrary = new ArrayList<>();
+    private final Random random = new Random();
 
     public Library() {}
 
@@ -27,9 +29,9 @@ public class Library {
         }
 
         startReading(reader);
-        Thread.sleep((int) ((Math.random() + 0.5) * 2000)); // czytanie
+        Thread.sleep(random.nextInt(1000, 3000)); // czytanie
         stopReading(reader);
-        Thread.sleep((int) ((Math.random() + 0.5) * 3000)); // czekanie
+        Thread.sleep(random.nextInt(1500, 4500)); // czekanie
     }
 
     private void startReading(Reader reader) throws InterruptedException {
@@ -46,7 +48,7 @@ public class Library {
     private void stopReading(Reader reader) throws InterruptedException {
         mutex.acquire();
         readerCount--;
-        readersInLibrary = readersInLibrary.stream().filter(r -> r.getReaderId() != reader.getReaderId()).collect(Collectors.toList());
+        readersInLibrary = readersInLibrary.stream().filter(r -> r.equals(reader)).collect(Collectors.toList());
         sendCommunicate("Czytelnik " + reader.getReaderId() + " skończył czytać.");
         logReadersInLibrary();
         if (isEmpty()) {
@@ -67,11 +69,11 @@ public class Library {
         sendCommunicate("Pisarz " + writer.getWriterId() + " chce wejść do czytelni.");
         startWriting(writer);
 
-        Thread.sleep((int) ((Math.random() + 0.5) * 2000));
+        Thread.sleep(random.nextInt(1000, 3000));
 
         stopWriting(writer);
 
-        Thread.sleep((int) ((Math.random() + 0.5) * 3000));
+        Thread.sleep(random.nextInt(1500, 4500));
     }
 
     private void startWriting(Writer writer) throws InterruptedException {
@@ -81,8 +83,8 @@ public class Library {
         logWritersInLibrary();
     }
 
-    private void stopWriting(Writer writer) throws InterruptedException {
-        writersInLibrary = writersInLibrary.stream().filter(w -> w.getWriterId() != writer.getWriterId()).collect(Collectors.toList());
+    private void stopWriting(Writer writer) {
+        writersInLibrary = writersInLibrary.stream().filter(w -> w.equals(writer)).collect(Collectors.toList());
         sendCommunicate("Pisarz " + writer.getWriterId() + " skończył pisać.");
         logWritersInLibrary();
         wrt.release();
