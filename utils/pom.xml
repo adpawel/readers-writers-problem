@@ -20,6 +20,17 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+
+    <dependency>
       <groupId>edu.umd.cs.mtc</groupId>
       <artifactId>multithreadedtc</artifactId>
       <version>1.01</version>

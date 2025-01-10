@@ -37,4 +37,11 @@ public class Writer extends Thread{
         Writer other = (Writer) o;
         return Objects.equals(other.getWriterId(), writerId);
     }
+
+    @Override
+    public int hashCode() {
+        int result = writerId.hashCode();
+        result = 31 * result + random.nextInt(1, 10);
+        return result;
+    }
 }

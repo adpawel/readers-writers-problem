@@ -12,20 +12,30 @@ import java.util.stream.Collectors;
 public class Library {
     private int readerCount = 0;
     private final Semaphore rdr = new Semaphore(5, true);
-    private final Semaphore mutex = new Semaphore(1, true);
-    private final Semaphore wrt = new Semaphore(1, true);
+    private final Semaphore mutex;
+    private final Semaphore wrt;
     private final int noAllowedReaders;
     private List<Reader> readersInLibrary = new ArrayList<>();
     private List<Writer> writersInLibrary = new ArrayList<>();
     private final Random random = new Random();
-    private List<Thread> queue = new ArrayList<>();
+    private final List<Thread> queue = new ArrayList<>();
 
     public Library() {
+        mutex = new Semaphore(1, true);
+        wrt = new Semaphore(1, true);
         this.noAllowedReaders = 5;
     }
 
     public Library(int noAllowedReaders) {
+        mutex = new Semaphore(1, true);
+        wrt = new Semaphore(1, true);
         this.noAllowedReaders = noAllowedReaders;
+    }
+
+    public Library(Semaphore wrt, Semaphore mutex) {
+        this.noAllowedReaders = 5;
+        this.wrt = wrt;
+        this.mutex = mutex;
     }
 
     void reading(Reader reader) throws InterruptedException {
@@ -103,7 +113,7 @@ public class Library {
         wrt.release();
     }
 
-    private void sendCommunicate(String communicate){
+    void sendCommunicate(String communicate){
         System.out.println(communicate);
     }
 

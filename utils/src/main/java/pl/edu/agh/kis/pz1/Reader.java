@@ -37,4 +37,13 @@ public class Reader extends Thread {
         Reader other = (Reader) o;
         return Objects.equals(other.getReaderId(), readerId);
     }
+
+    @Override
+    public int hashCode() {
+        int result = readerId.hashCode();
+        result = 31 * result + random.nextInt(1, 10);
+        return result;
+    }
 }
+
+
