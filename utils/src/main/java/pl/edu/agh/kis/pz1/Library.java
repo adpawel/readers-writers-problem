@@ -3,6 +3,7 @@ package pl.edu.agh.kis.pz1;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Semaphore;
@@ -18,7 +19,6 @@ public class Library {
     private List<Reader> readersInLibrary = new ArrayList<>();
     private List<Writer> writersInLibrary = new ArrayList<>();
     private final Random random = new Random();
-    private final List<Thread> queue = new ArrayList<>();
 
     public Library() {
         mutex = new Semaphore(1, true);
@@ -64,7 +64,7 @@ public class Library {
         mutex.release();
     }
 
-    private void stopReading(Reader reader) throws InterruptedException {
+    void stopReading(Reader reader) throws InterruptedException {
         mutex.acquire();
         readerCount--;
         readersInLibrary = readersInLibrary.stream().filter(r -> !r.equals(reader)).collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class Library {
         rdr.release();
     }
 
-    private void logWhoIsInLibrary(){
+    void logWhoIsInLibrary(){
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("W czytelni: ");
         readersInLibrary
@@ -99,14 +99,14 @@ public class Library {
         Thread.sleep(random.nextInt(1500, 4500));
     }
 
-    private void startWriting(Writer writer) throws InterruptedException {
+    void startWriting(Writer writer) throws InterruptedException {
         wrt.acquire();
         sendCommunicate("Pisarz " + writer.getWriterId() + " pisze.");
         writersInLibrary.add(writer);
         logWhoIsInLibrary();
     }
 
-    private void stopWriting(Writer writer) {
+    void stopWriting(Writer writer) {
         writersInLibrary = writersInLibrary.stream().filter(w -> !w.equals(writer)).collect(Collectors.toList());
         sendCommunicate("Pisarz " + writer.getWriterId() + " skończył pisać.");
         logWhoIsInLibrary();
@@ -117,11 +117,7 @@ public class Library {
         System.out.println(communicate);
     }
 
-    private boolean isEmpty(){
+    boolean isEmpty(){
         return readerCount == 0;
-    }
-
-    private boolean maxNumberOfReadersReached(){
-        return readerCount >= noAllowedReaders;
     }
 }
