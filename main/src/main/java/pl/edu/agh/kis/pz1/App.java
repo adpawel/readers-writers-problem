@@ -7,8 +7,8 @@ public class App {
     public static void main(String[] args) {
         Library library = new Library();
 
-        int noReaders = 15;
-        int noWriters = 2;
+        int noReaders = 10;
+        int noWriters = 4;
 
 
         for (int i = 0; i < noReaders; i++) {

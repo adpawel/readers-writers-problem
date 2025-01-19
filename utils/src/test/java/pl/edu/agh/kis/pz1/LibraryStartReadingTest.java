@@ -1,7 +1,6 @@
 package pl.edu.agh.kis.pz1;
 
 import edu.umd.cs.mtc.MultithreadedTest;
-import edu.umd.cs.mtc.TestFramework;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +9,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.concurrent.Semaphore;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
 class LibraryStartReadingTest extends MultithreadedTest {
@@ -34,8 +34,12 @@ class LibraryStartReadingTest extends MultithreadedTest {
         library.startReading(new Reader(2, library));
     }
 
-    @Override
-    public void finish() {
+    @Test
+    void testStartReading() throws Throwable {
+        initialize();
+        thread1();
+        thread2();
+
         Assertions.assertEquals(2, library.getReaderCount());
         Assertions.assertEquals(2, library.getReadersInLibrary().size());
 
@@ -45,10 +49,5 @@ class LibraryStartReadingTest extends MultithreadedTest {
             throw new RuntimeException(e);
         }
         verify(mutexMock, times(2)).release();
-    }
-
-    @Test
-    void testStartReading() throws Throwable {
-        TestFramework.runOnce(new LibraryStartReadingTest());
     }
 }

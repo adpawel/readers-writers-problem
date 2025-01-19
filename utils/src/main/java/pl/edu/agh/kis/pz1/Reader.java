@@ -3,13 +3,14 @@ package pl.edu.agh.kis.pz1;
 import lombok.Getter;
 
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 public class Reader extends Thread {
     private final Integer readerId;
     private final Library library;
-    private final Random random = new Random();
+    private final ThreadLocalRandom random = ThreadLocalRandom.current();
+    private volatile boolean running = true;
 
     public Reader(Integer id, Library library) {
         System.out.println("Czytelnik " + id + " wystartował");
@@ -20,11 +21,11 @@ public class Reader extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(random.nextInt(200, 800));
-            while(true){
+            while(running){
                 library.reading(this);
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             System.err.println("Wątek czytelnika " + readerId + " przerwany");
         }
     }
@@ -43,6 +44,10 @@ public class Reader extends Thread {
         int result = readerId.hashCode();
         result = 31 * result + random.nextInt(1, 10);
         return result;
+    }
+
+    public void stopRunning() {
+        running = false;
     }
 }
 

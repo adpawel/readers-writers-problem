@@ -4,19 +4,23 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 
 @Getter
 public class Library {
+    private static final String READER_CONST = "Czytelnik ";
+    private static final String WRITER_CONST = "Pisarz ";
     private int readerCount = 0;
     private final Semaphore mutex;
     private final Semaphore wrt;
     private final int noAllowedReaders;
     private List<Reader> readersInLibrary = new ArrayList<>();
     private List<Writer> writersInLibrary = new ArrayList<>();
-    private final Random random = new Random();
-    private final List<Thread> requestQueue = new LinkedList<>();
+    private final ThreadLocalRandom random = ThreadLocalRandom.current();
+
+    private final Queue<Thread> requestQueue = new LinkedList<>();
 
     public Library() {
         mutex = new Semaphore(1, true);
@@ -37,50 +41,46 @@ public class Library {
     }
 
     void reading(Reader reader) throws InterruptedException {
-        sendCommunicate("Czytelnik " + reader.getReaderId() + " chce wejść do czytelni");
+        sendCommunicate(READER_CONST + reader.getReaderId() + " chce wejść do czytelni");
 
         synchronized (this) {
             requestQueue.add(Thread.currentThread());
-            while (!Thread.currentThread().equals(requestQueue.get(0)) || readerCount >= noAllowedReaders) {
+            logWhoIsInQueue();
+            while (!Thread.currentThread().equals(requestQueue.peek()) || readerCount >= noAllowedReaders) {
                 wait();
             }
         }
 
-        mutex.acquire();
         startReading(reader);
-        mutex.release();
-
         Thread.sleep(random.nextInt(1000, 3000)); // czytanie
-//        mutex.acquire();
         stopReading(reader);
-//        mutex.release();
     }
 
     void startReading(Reader reader) throws InterruptedException {
-//        synchronized (this) {
-            readerCount++;
-            if (readerCount == 1) {
-                wrt.acquire();
-            }
-            readersInLibrary.add(reader);
-            sendCommunicate("Czytelnik " + reader.getReaderId() + " czyta...");
-            logWhoIsInLibrary();
-//        }
+        mutex.acquire();
+        readerCount++;
+        if (readerCount == 1) {
+            wrt.acquire();
+        }
+        readersInLibrary.add(reader);
+        sendCommunicate(READER_CONST + reader.getReaderId() + " czyta...");
+        logWhoIsInLibrary();
         synchronized (this) {
             requestQueue.remove(Thread.currentThread());
             notifyAll();
         }
+        mutex.release();
     }
 
     void stopReading(Reader reader) throws InterruptedException {
         mutex.acquire();
-            readerCount--;
-            readersInLibrary = readersInLibrary.stream().filter(r -> !r.equals(reader)).collect(Collectors.toList());
-            sendCommunicate("Czytelnik " + reader.getReaderId() + " skończył czytać.");
-            logWhoIsInLibrary();
-            if (readerCount == 0) {
-                wrt.release();
-            }
+        readerCount--;
+        readersInLibrary = readersInLibrary.stream().filter(r -> !r.equals(reader)).collect(Collectors.toList());
+        sendCommunicate(READER_CONST + reader.getReaderId() + " skończył czytać.");
+        logWhoIsInLibrary();
+        if (readerCount == 0) {
+            wrt.release();
+        }
         mutex.release();
         synchronized (this) {
             notifyAll();
@@ -90,38 +90,52 @@ public class Library {
     void logWhoIsInLibrary() {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("W czytelni: ");
-        readersInLibrary.forEach(r -> messageBuilder.append("Czytelnik ").append(r.getReaderId()).append(", "));
-        writersInLibrary.forEach(w -> messageBuilder.append("Pisarz ").append(w.getWriterId()).append(", "));
+        readersInLibrary.forEach(r -> messageBuilder.append(READER_CONST).append(r.getReaderId()).append(", "));
+        writersInLibrary.forEach(w -> messageBuilder.append(WRITER_CONST).append(w.getWriterId()).append(", "));
         sendCommunicate(messageBuilder.toString());
     }
 
+    void logWhoIsInQueue() {
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("W kolejce: ");
+
+        for (Thread thread : requestQueue) {
+            if (thread instanceof Reader reader) {
+                messageBuilder.append(READER_CONST).append(reader.getReaderId()).append(", ");
+            } else if (thread instanceof Writer writer) {
+                messageBuilder.append(WRITER_CONST).append(writer.getWriterId()).append(", ");
+            }
+        }
+        sendCommunicate(messageBuilder.toString());
+    }
+
+
     void writing(Writer writer) throws InterruptedException {
-        sendCommunicate("Pisarz " + writer.getWriterId() + " chce wejść do czytelni");
+        sendCommunicate(WRITER_CONST + writer.getWriterId() + " chce wejść do czytelni");
 
         synchronized (this) {
             requestQueue.add(Thread.currentThread());
-            while (!Thread.currentThread().equals(requestQueue.get(0))) {
+            logWhoIsInQueue();
+            while (!Thread.currentThread().equals(requestQueue.peek())) {
                 wait();
             }
         }
 
         startWriting(writer);
-
         Thread.sleep(random.nextInt(1000, 3000)); // pisanie
-
         stopWriting(writer);
     }
 
     void startWriting(Writer writer) throws InterruptedException {
         wrt.acquire();
-        sendCommunicate("Pisarz " + writer.getWriterId() + " pisze.");
+        sendCommunicate(WRITER_CONST + writer.getWriterId() + " pisze.");
         writersInLibrary.add(writer);
         logWhoIsInLibrary();
     }
 
-    void stopWriting(Writer writer) throws InterruptedException {
+    void stopWriting(Writer writer) {
         writersInLibrary = writersInLibrary.stream().filter(w -> !w.equals(writer)).collect(Collectors.toList());
-        sendCommunicate("Pisarz " + writer.getWriterId() + " skończył pisać.");
+        sendCommunicate(WRITER_CONST + writer.getWriterId() + " skończył pisać.");
         logWhoIsInLibrary();
         wrt.release();
         synchronized (this) {
