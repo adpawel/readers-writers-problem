@@ -20,7 +20,7 @@ public class Reader extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(random.nextInt(200, 1200));
+            Thread.sleep(random.nextInt(200, 800));
             while(true){
                 library.reading(this);
             }

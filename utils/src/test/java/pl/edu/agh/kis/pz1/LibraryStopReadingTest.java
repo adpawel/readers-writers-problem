@@ -38,6 +38,7 @@ class LibraryStopReadingTest extends MultithreadedTest {
     }
 
     void thread2() throws InterruptedException {
+        Thread.sleep(50);
         library.startReading(reader2);
         library.stopReading(reader2);
     }
