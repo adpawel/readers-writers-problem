@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.powermock.api.mockito.PowerMockito;
 
+import java.util.concurrent.CountDownLatch;
+
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
@@ -27,18 +29,19 @@ class WriterTest {
         Assertions.assertEquals(w1, w2);
         Assertions.assertNotEquals(w1, w3);
         Assertions.assertNotEquals(w2, w3);
-        Assertions.assertNotEquals(null, w1);
-        Assertions.assertNotEquals("string", w1);
+        Assertions.assertFalse(w1.equals(null));
+        Assertions.assertFalse(w1.equals("string"));
     }
 
     @Test
     void testRun() throws InterruptedException {
-        Thread thread = new Thread(w1);
-        thread.start();
-//        Thread.sleep(900);
+        CountDownLatch latch = new CountDownLatch(1);
+        w1.setLatch(latch);
+        w1.start();
+        latch.await();
 
         w1.stopRunning();
-        thread.join();
+        w1.join();
         verify(libraryMock, atLeastOnce()).writing(w1);
     }
 }

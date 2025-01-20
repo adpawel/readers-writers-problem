@@ -1,17 +1,18 @@
 package pl.edu.agh.kis.pz1;
 
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Getter
+@Data
 public class Writer extends Thread{
     private final Integer writerId;
     private final Library library;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
     private volatile boolean running = true;
-
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public Writer(Integer id, Library library) {
         System.out.println("Pisarz " + id + " wystartował");
@@ -22,8 +23,8 @@ public class Writer extends Thread{
     @Override
     public void run() {
         try {
+            latch.countDown();
             while (running) {
-//            Thread.sleep(random.nextInt(200, 800));
                 library.writing(this);
             }
         } catch (InterruptedException e) {

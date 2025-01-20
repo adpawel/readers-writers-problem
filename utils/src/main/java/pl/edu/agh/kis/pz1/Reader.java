@@ -1,16 +1,18 @@
 package pl.edu.agh.kis.pz1;
 
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Getter
+@Data
 public class Reader extends Thread {
     private final Integer readerId;
     private final Library library;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
     private volatile boolean running = true;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public Reader(Integer id, Library library) {
         System.out.println("Czytelnik " + id + " wystartował");
@@ -21,6 +23,7 @@ public class Reader extends Thread {
     @Override
     public void run() {
         try {
+            latch.countDown();
             while(running){
                 library.reading(this);
             }
