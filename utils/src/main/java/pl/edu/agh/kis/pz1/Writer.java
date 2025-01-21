@@ -6,6 +6,10 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Klasa Writer reprezentuje pisarza jako wątek w symulacji.
+ * Każdy pisarz posiada unikalny identyfikator i odniesienie do biblioteki, w której działa.
+ */
 @Data
 public class Writer extends Thread{
     private final Integer writerId;
@@ -14,18 +18,29 @@ public class Writer extends Thread{
     private volatile boolean running = true;
     private CountDownLatch latch = new CountDownLatch(1);
 
+    /**
+     * Konstruktor inicjalizuje pisarza z podanym identyfikatorem i odniesieniem do biblioteki.
+     *
+     * @param id       unikalny identyfikator pisarza.
+     * @param library  biblioteka, z której pisarz korzysta.
+     */
     public Writer(Integer id, Library library) {
         System.out.println("Pisarz " + id + " wystartował");
         this.writerId = id;
         this.library = library;
     }
 
+    /**
+     * Główna metoda wątku, obsługuje działania pisarza podczas symulacji.
+     * Pisarz wchodzi do biblioteki, pisze, a następnie czeka przez losowy czas.
+     */
     @Override
     public void run() {
         try {
             latch.countDown();
             while (running) {
                 library.writing(this);
+                Thread.sleep(random.nextInt(500, 2000));
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -33,6 +48,12 @@ public class Writer extends Thread{
         }
     }
 
+    /**
+     * Porównuje tego pisarza z innym obiektem na podstawie identyfikatora.
+     *
+     * @param o obiekt do porównania.
+     * @return true, jeśli identyfikatory są takie same; false w przeciwnym razie.
+     */
     @Override
     public boolean equals(Object o){
         if(o == null || getClass() != o.getClass()){
@@ -42,13 +63,19 @@ public class Writer extends Thread{
         return Objects.equals(other.getWriterId(), writerId);
     }
 
+    /**
+     * Generuje hash code na podstawie identyfikatora pisarza.
+     *
+     * @return hash code pisarza.
+     */
     @Override
     public int hashCode() {
-        int result = writerId.hashCode();
-        result = 31 * result + random.nextInt(1, 10);
-        return result;
+        return Objects.hash(writerId);
     }
 
+    /**
+     * Zatrzymuje działanie wątku pisarza.
+     */
     public void stopRunning() {
         running = false;
     }

@@ -13,6 +13,10 @@ import java.util.concurrent.Semaphore;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/**
+ * Klasa LibraryWritingTest testuje metodę writing() w klasie Library,
+ * symulując scenariusze związane z jednoczesnym dostępem kilku pisarzy do biblioteki.
+ */
 @RunWith(PowerMockRunner.class)
 class LibraryWritingTest extends MultithreadedTest {
     private Library library;
@@ -20,6 +24,10 @@ class LibraryWritingTest extends MultithreadedTest {
     private Writer writer1;
     private Writer writer2;
 
+    /**
+     * Metoda inicjalizująca środowisko testowe.
+     * Tworzy mocki dla semaforów, inicjalizuje bibliotekę oraz dwóch pisarzy.
+     */
     @Override
     public void initialize() {
         wrtMock = PowerMockito.mock(Semaphore.class);
@@ -30,14 +38,31 @@ class LibraryWritingTest extends MultithreadedTest {
         library = new Library(wrtMock, mutexMock);
     }
 
+    /**
+     * Symuluje scenariusz, w którym pierwszy pisarz wykonuje operację pisania.
+     *
+     * @throws InterruptedException jeśli operacja jest przerwana.
+     */
     void thread1() throws InterruptedException {
         library.writing(writer1);
     }
 
+    /**
+     * Symuluje scenariusz, w którym drugi pisarz wykonuje operację pisania.
+     *
+     * @throws InterruptedException jeśli operacja jest przerwana.
+     */
     void thread2() throws InterruptedException {
         library.writing(writer2);
     }
 
+    /**
+     * Testuje poprawność działania metody writing() w kontekście współbieżności.
+     * Sprawdza, czy lista pisarzy w bibliotece jest pusta po zakończeniu operacji
+     * oraz czy semafor wrt został prawidłowo użyty (zablokowany i zwolniony).
+     *
+     * @throws Throwable jeśli wystąpi błąd podczas testu.
+     */
     @Test
     void testWriting() throws Throwable {
         initialize();
