@@ -55,7 +55,7 @@ class LibraryStartReadingTest extends MultithreadedTest {
 
     /**
      * Testuje działanie metody startReading() w warunkach współbieżności.
-     * Sprawdza liczbę czytelników w bibliotece oraz interakcje z semaforami.
+     * Sprawdza liczbę czytelników w czytelni oraz interakcje z semaforami.
      *
      * @throws Throwable jeśli wystąpi błąd podczas testu.
      */

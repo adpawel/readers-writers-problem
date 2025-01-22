@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
- * Klasa Library reprezentuje bibliotekę, w której czytelnicy i pisarze współdzielą zasoby.
+ * Klasa Library reprezentuje czytelnię, w której czytelnicy i pisarze współdzielą zasoby.
  * Zarządza procesem wchodzenia, czytania, pisania i wychodzenia z czytelni.
  */
 @Getter
@@ -32,8 +32,8 @@ public class Library {
      * Konstruktor domyślny. Ustawia domyślne limity dla liczby czytelników.
      */
     public Library() {
-        mutex = new Semaphore(1);
-        wrt = new Semaphore(1);
+        mutex = new Semaphore(1, true);
+        wrt = new Semaphore(1, true);
         this.noAllowedReaders = 5;
     }
 
@@ -49,7 +49,7 @@ public class Library {
     }
 
     /**
-     * Konstruktor z przekazaniem semaforów.
+     * Konstruktor z przekazaniem semaforów. Używany w testach
      *
      * @param wrt   semafor współdzielony.
      * @param mutex semafor dla czytelników.

@@ -15,8 +15,6 @@ import static org.mockito.Mockito.verify;
 /**
  * Klasa LibraryStopReadingTest testuje metodę stopReading() w klasie Library,
  * symulując scenariusz, w którym czytelnik kończy czytanie.
- * Wykorzystuje PowerMockito do mockowania semaforów oraz MultithreadedTest
- * do obsługi środowiska wielowątkowego.
  */
 @RunWith(PowerMockRunner.class)
 class LibraryStopReadingTest extends MultithreadedTest {

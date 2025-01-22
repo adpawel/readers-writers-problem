@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Klasa Reader reprezentuje czytelnika jako wątek w symulacji.
- * Każdy czytelnik posiada unikalny identyfikator i odniesienie do biblioteki, w której działa.
+ * Każdy czytelnik posiada unikalny identyfikator i odniesienie do czytelni, w której działa.
  */
 @Data
 public class Reader extends Thread {
@@ -19,10 +19,10 @@ public class Reader extends Thread {
     private CountDownLatch latch = new CountDownLatch(1);
 
     /**
-     * Konstruktor inicjalizuje czytelnika z podanym identyfikatorem i odniesieniem do biblioteki.
+     * Konstruktor inicjalizuje czytelnika z podanym identyfikatorem i odniesieniem do czytelni.
      *
      * @param id       unikalny identyfikator czytelnika.
-     * @param library  biblioteka, z której czytelnik korzysta.
+     * @param library  czytelnia, z której czytelnik korzysta.
      */
     public Reader(Integer id, Library library) {
         System.out.println("Czytelnik " + id + " wystartował");
@@ -32,7 +32,7 @@ public class Reader extends Thread {
 
     /**
      * Główna metoda wątku, obsługuje działania czytelnika podczas symulacji.
-     * Czytelnik wchodzi do biblioteki, czyta, a następnie czeka przez losowy czas.
+     * Czytelnik wchodzi do czytelni, czyta, a następnie czeka przez losowy czas.
      */
     @Override
     public void run() {

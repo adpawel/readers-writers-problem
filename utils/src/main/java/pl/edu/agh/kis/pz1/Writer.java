@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Klasa Writer reprezentuje pisarza jako wątek w symulacji.
- * Każdy pisarz posiada unikalny identyfikator i odniesienie do biblioteki, w której działa.
+ * Każdy pisarz posiada unikalny identyfikator i odniesienie do czytelni, w której działa.
  */
 @Data
 public class Writer extends Thread{
@@ -19,10 +19,10 @@ public class Writer extends Thread{
     private CountDownLatch latch = new CountDownLatch(1);
 
     /**
-     * Konstruktor inicjalizuje pisarza z podanym identyfikatorem i odniesieniem do biblioteki.
+     * Konstruktor inicjalizuje pisarza z podanym identyfikatorem i odniesieniem do czytelni.
      *
      * @param id       unikalny identyfikator pisarza.
-     * @param library  biblioteka, z której pisarz korzysta.
+     * @param library  czytelnia, z której pisarz korzysta.
      */
     public Writer(Integer id, Library library) {
         System.out.println("Pisarz " + id + " wystartował");
@@ -32,7 +32,7 @@ public class Writer extends Thread{
 
     /**
      * Główna metoda wątku, obsługuje działania pisarza podczas symulacji.
-     * Pisarz wchodzi do biblioteki, pisze, a następnie czeka przez losowy czas.
+     * Pisarz wchodzi do czytelni, pisze, a następnie czeka przez losowy czas.
      */
     @Override
     public void run() {

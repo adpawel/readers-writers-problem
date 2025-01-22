@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Klasa LibraryReadingTest zawiera testy jednostkowe i wielowątkowe dla klasy Library.
- * Wykorzystuje PowerMockito do mockowania semaforów oraz konfiguruje środowisko testowe wielowątkowe.
  */
 @RunWith(PowerMockRunner.class)
 class LibraryReadingTest extends MultithreadedTest {

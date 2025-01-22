@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Klasa LibraryWritingTest testuje metodę writing() w klasie Library,
- * symulując scenariusze związane z jednoczesnym dostępem kilku pisarzy do biblioteki.
+ * symulując scenariusze związane z jednoczesnym dostępem kilku pisarzy do czytelni.
  */
 @RunWith(PowerMockRunner.class)
 class LibraryWritingTest extends MultithreadedTest {
@@ -26,7 +26,7 @@ class LibraryWritingTest extends MultithreadedTest {
 
     /**
      * Metoda inicjalizująca środowisko testowe.
-     * Tworzy mocki dla semaforów, inicjalizuje bibliotekę oraz dwóch pisarzy.
+     * Tworzy mocki dla semaforów, inicjalizuje czytelnię oraz dwóch pisarzy.
      */
     @Override
     public void initialize() {

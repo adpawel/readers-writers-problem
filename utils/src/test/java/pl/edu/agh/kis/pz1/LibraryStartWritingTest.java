@@ -13,8 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 /**
  * Klasa LibraryStartWritingTest testuje metodę startWriting() w klasie Library
- * w kontekście wielowątkowym. Wykorzystuje PowerMockito do mockowania semaforów
- * i środowisko MultithreadedTest do symulacji współbieżności.
+ * w kontekście wielowątkowym.
  */
 @RunWith(PowerMockRunner.class)
 class LibraryStartWritingTest extends MultithreadedTest {
